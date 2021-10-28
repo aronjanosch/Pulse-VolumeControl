@@ -5,7 +5,6 @@ from subprocess import call, check_output
 import datetime
 from time import sleep, strftime, localtime
 import ntplib
-import os
 import argparse
 
 # Variables
