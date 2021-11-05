@@ -93,15 +93,15 @@ def main(args):
             if int(get_vol()) > args.volume:
                 tracker = tracker - 1
                 set_vol(tracker)
-                print("sleep for 64 secs")
+                print("VolControl Active \n lowering Volume \n sleeping for 64 seconds")
                 sleep(64)
-                print("woke up")
 
             if tracker < args.volume:
                 tracker = args.volume
 
         else:
             tracker = 100
+            print("Inactive")
             sleep(64)
 
 
