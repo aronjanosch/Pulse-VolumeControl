@@ -9,6 +9,7 @@ import argparse
 
 # Variables
 start = datetime.time(0, 0, 0)
+stage1 = datetime.time(1, 0, 0)
 end = datetime.time(10, 0, 0)
 
 ntp_client = ntplib.NTPClient()
@@ -17,9 +18,10 @@ ntp_client = ntplib.NTPClient()
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--state', default="go",
                     help='run state (default: normal run)')
-parser.add_argument('--volume', default=80, type=int,
+parser.add_argument('--volume_s1', default=90, type=int,
+                    help='s1 volume (default: 90)')
+parser.add_argument('--volume_min', default=80, type=int,
                     help='min volume (default: 80)')
-
 
 
 
@@ -79,6 +81,9 @@ def main(args):
 
         if cmd == "check_time":
             print(time_in_range(start, end, get_ntptime(ntp_client)))
+            
+        if cmd == "check_time_stage1":
+            print(time_in_range(stage1, end, get_ntptime(ntp_client)))
 
         if cmd == "tracker":
             print(tracker)
@@ -88,7 +93,19 @@ def main(args):
     
 
     while args.state == "go":
-        if time_in_range(start, end, get_ntptime(ntp_client)):
+        if time_in_range(start, stage1, get_ntptime(ntp_client)):
+
+            if int(get_vol()) > args.volume_s1:
+                tracker = tracker - 1
+                set_vol(tracker)
+                print("VolControl Active \n lowering Volume \n sleeping for 64 seconds")
+                sleep(64)
+
+            if tracker < args.volume_s1:
+                tracker = args.volume_s1
+                set_vol(tracker)
+                
+        if time_in_range(stage1, end, get_ntptime(ntp_client)):
 
             if int(get_vol()) > args.volume:
                 tracker = tracker - 1
@@ -98,6 +115,8 @@ def main(args):
 
             if tracker < args.volume:
                 tracker = args.volume
+                set_vol(tracker)
+
 
         else:
             tracker = 100
