@@ -105,7 +105,7 @@ def main(args):
                 tracker = args.volume_s1
                 set_vol(tracker)
                 
-        if time_in_range(stage1, end, get_ntptime(ntp_client)):
+        elif time_in_range(stage1, end, get_ntptime(ntp_client)):
 
             if int(get_vol()) > args.volume:
                 tracker = tracker - 1
@@ -125,6 +125,7 @@ def main(args):
 
 
 if __name__ == "__main__":
+    print("Starting Volume Control...")
     args = parser.parse_args()
     main(args)
 
