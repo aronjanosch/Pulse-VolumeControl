@@ -1,10 +1,6 @@
 #!/bin/bash
 
-sudo cp ./VolControl.py /usr/local/bin/VolControl.py
-sudo cp ./VolControl.service /etc/systemd/system/VolControl.service
-
-
-cat > VolControl1.service << EOF
+cat > VolControl.service << EOF
 [Unit]
 Description=Wuba Volume Controle Script by Aron
 After=multi-user.target
@@ -21,3 +17,10 @@ ExecStart=/usr/bin/python3 /usr/local/bin/VolControl.py
 [Install]
 WantedBy=multi-user.target
 EOF
+
+
+sudo cp ./VolControl.py /usr/local/bin/VolControl.py
+sudo cp ./VolControl.service /etc/systemd/system/VolControl.service
+
+
+
