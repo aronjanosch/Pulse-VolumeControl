@@ -59,6 +59,7 @@ def ntp_time():
 def main(args):
 
     tracker=100
+    set_vol(tracker)
 
     while args.state == "test":
         cmd =input("command:")
@@ -106,6 +107,7 @@ def main(args):
                 set_vol(tracker)
                 
             if int(get_vol()) <= args.volume_s1:
+                print("Threshold reached")
                 sleep(64)
                 
         elif time_in_range(stage1, end, get_ntptime(ntp_client)):
@@ -121,6 +123,7 @@ def main(args):
                 set_vol(tracker)
                 
             if int(get_vol()) <= args.volume_min:
+                print("Threshold reached")
                 sleep(64)
 
 
