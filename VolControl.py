@@ -105,17 +105,23 @@ def main(args):
                 tracker = args.volume_s1
                 set_vol(tracker)
                 
+            if int(get_vol()) <= args.volume_s1:
+                sleep(64)
+                
         elif time_in_range(stage1, end, get_ntptime(ntp_client)):
 
-            if int(get_vol()) > args.volume:
+            if int(get_vol()) > args.volume_min:
                 tracker = tracker - 1
                 set_vol(tracker)
                 print("VolControl Active \n lowering Volume \n sleeping for 64 seconds")
                 sleep(64)
 
-            if tracker < args.volume:
-                tracker = args.volume
+            if tracker < args.volume_min:
+                tracker = args.volume_min
                 set_vol(tracker)
+                
+            if int(get_vol()) <= args.volume_min:
+                sleep(64)
 
 
         else:
