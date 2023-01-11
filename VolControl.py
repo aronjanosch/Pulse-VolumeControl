@@ -61,8 +61,9 @@ def get_ntptime(ntp_client):
 def ntp_time():
     pass
 
-def init_check(args):
+def init_check(args):   
     time_now = get_ntptime(ntp_client)
+    global tracker
     if time_in_range(start, stage1, time_now):
         tracker = args.volume_s1
         set_vol(tracker)
@@ -78,7 +79,7 @@ def init_check(args):
     sleep(64)
 
 def main(args):
-
+    global tracker 
     set_vol(tracker)
 
     while args.state == "test":
