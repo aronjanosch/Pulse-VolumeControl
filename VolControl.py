@@ -10,7 +10,8 @@ import argparse
 # Variables
 start = datetime.time(0, 0, 0)
 stage1 = datetime.time(1, 0, 0)
-end = datetime.time(10, 0, 0)
+end = datetime.time(2, 0, 0)
+reset = datetime.time(10, 0, 0)
 
 ntp_client = ntplib.NTPClient()
 
@@ -44,6 +45,8 @@ def time_in_range(start, end, current):
     return start <= current <= end
 
 def get_ntptime(ntp_client):
+    if ntp_client == None:
+        return datetime.datetime.now().time()
     try:
         response = ntp_client.request('0.de.pool.ntp.org')
         time = datetime.datetime.fromtimestamp(response.tx_time).time()
@@ -57,12 +60,16 @@ def ntp_time():
     pass
 
 def init_check(args):
-    if time_in_range(start, stage1, get_ntptime(ntp_client)):
+    time_now = get_ntptime(ntp_client)
+    if time_in_range(start, stage1, time_now):
         set_vol(args.volume_s1)
-    elif time_in_range(stage1, end, get_ntptime(ntp_client)):
+    elif time_in_range(stage1, end, time_now):
         set_vol(args.volume_min)
+    elif time_in_range(end, reset, time_now):
+            set_vol(0)
     else:
         set_vol(100)
+    sleep(64)
 
 def main(args):
 
@@ -102,7 +109,8 @@ def main(args):
     
 
     while args.state == "go":
-        if time_in_range(start, stage1, get_ntptime(ntp_client)):
+        time_now = get_ntptime(ntp_client)
+        if time_in_range(start, stage1, time_now):
 
             if int(get_vol()) > args.volume_s1:
                 tracker = tracker - 1
@@ -118,7 +126,7 @@ def main(args):
                 print("Threshold reached")
                 sleep(64)
                 
-        elif time_in_range(stage1, end, get_ntptime(ntp_client)):
+        elif time_in_range(stage1, end, time_now):
 
             if int(get_vol()) > args.volume_min:
                 tracker = tracker - 1
@@ -133,7 +141,9 @@ def main(args):
             if int(get_vol()) <= args.volume_min:
                 print("Threshold reached")
                 sleep(64)
-
+        elif time_in_range(end, reset, time_now):
+            set_vol(0)
+            sleep(64)
 
         else:
             tracker = 100
