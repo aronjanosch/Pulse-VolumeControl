@@ -13,6 +13,8 @@ stage1 = datetime.time(1, 0, 0)
 end = datetime.time(2, 0, 0)
 reset = datetime.time(10, 0, 0)
 
+tracker = 100
+
 ntp_client = ntplib.NTPClient()
 
 
@@ -62,18 +64,21 @@ def ntp_time():
 def init_check(args):
     time_now = get_ntptime(ntp_client)
     if time_in_range(start, stage1, time_now):
-        set_vol(args.volume_s1)
+        tracker = args.volume_s1
+        set_vol(tracker)
     elif time_in_range(stage1, end, time_now):
-        set_vol(args.volume_min)
+        tracker = args.volume_min
+        set_vol(tracker)
     elif time_in_range(end, reset, time_now):
-            set_vol(0)
+        tracker = 0
+        set_vol(tracker)
     else:
-        set_vol(100)
+        tracker = 100
+        set_vol(tracker)
     sleep(64)
 
 def main(args):
 
-    tracker=100
     set_vol(tracker)
 
     while args.state == "test":
