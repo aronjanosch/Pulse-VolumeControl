@@ -47,7 +47,7 @@ def get_ntptime(ntp_client):
     try:
         response = ntp_client.request('0.de.pool.ntp.org')
         time = datetime.datetime.fromtimestamp(response.tx_time).time()
-    except ntplib.NTPException as ntpe:
+    except Exception as ntpe:
         print(ntpe)
         time = datetime.datetime.now().time()
         print('Could not sync with time server')
@@ -55,6 +55,14 @@ def get_ntptime(ntp_client):
 
 def ntp_time():
     pass
+
+def init_check(args):
+    if time_in_range(start, stage1, get_ntptime(ntp_client)):
+        set_vol(args.volume_s1)
+    elif time_in_range(stage1, end, get_ntptime(ntp_client)):
+        set_vol(args.volume_min)
+    else:
+        set_vol(100)
 
 def main(args):
 
@@ -135,7 +143,9 @@ def main(args):
 
 if __name__ == "__main__":
     print("Starting Volume Control...")
+    sleep(64)
     args = parser.parse_args()
+    init_check(args)
     main(args)
 
 
