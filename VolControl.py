@@ -153,6 +153,7 @@ def main(args):
 
         else:
             tracker = 100
+            set_vol(tracker)
             print("Inactive")
             sleep(64)
 
